@@ -1,180 +1,190 @@
-# RNBO Webpage Example
+# Chowning FM
 
-This example shows you how to add dynamic audio to a webpage, using the web export feature of RNBO, part of [Max 8](https://cycling74.com/products/max) made by [Cycling '74](https://cycling74.com).
+This repo is now tuned as a focused RNBO web demo for a compact FM patch. The RNBO export remains replaceable, but the default experience is aimed at showing off the `ChowingFM` example cleanly in a browser.
 
-This repository uses [Node](https://nodejs.org/en/) to launch a simple web server to make your webpage available locally. For more on why this is necessary, see [Why a local server?](#why-a-local-server)
+The intended workflow is:
 
-## Recommended workflow for iterative RNBO exports
+1. RNBO exports DSP into `export/`.
+2. The web app loads the current export through `export/export-manifest.json`.
+3. You keep iterating on the UI, layout, and interaction code in this repo.
 
-Yes: this repo can support the workflow you want, where your RNBO export is replaceable and your web UI keeps evolving independently.
+## Template architecture
 
-Treat the project as two layers:
+The project is split into two layers:
 
-- `export/` is disposable RNBO output
-- `js/`, `style/`, and `index.html` are your hand-authored web app
+- `export/`: disposable RNBO output
+- `index.html`, `js/`, `style/`: your hand-authored web app
 
-This repository is now set up so that:
+Key files:
 
-- `js/app.js` loads the current export using `export/export-manifest.json` when available
-- `js/custom-ui.js` is reserved for your custom interface code
-- a `rnbo-ready` browser event fires when the RNBO device is ready
-- `window.rnboApp` is exposed for debugging in the browser console
+| Location | Purpose |
+| --- | --- |
+| `js/app.js` | Generic RNBO bootstrapping, device creation, dependency loading, and `rnbo-ready` event dispatch |
+| `js/template-config.js` | Project-level template settings such as app name, default UI skin, keyboard range, and grouping |
+| `js/custom-ui.js` | Generic UI engine that mounts controls, presets, MIDI, and keyboard behavior |
+| `js/skins/default.js` | Neutral starter skin for new projects |
+| `js/skins/juno.js` | Preserved instrument-specific example skin from the copied Juno workflow |
+| `style/style.css` | Base template styling plus skin-specific theme overrides |
+| `STYLE_GUIDE.md` | Repo-level visual rules for typography, color usage, and review criteria |
+| `scripts/sync-rnbo-export.mjs` | Refreshes `export/export-manifest.json` to point at the latest `.export.json` file |
 
-That means your loop can be:
+The browser exposes `window.rnboApp` for inspection and emits a `rnbo-ready` event once the RNBO device is available.
 
-1. Edit the RNBO patch in Max.
-2. Export it again into `export/`.
-3. Run `npm run sync-export` if the export filename changed or if you want to refresh the manifest.
-4. Keep building your interface in `js/custom-ui.js`, `index.html`, and `style/style.css`.
-5. Refresh the page and test again.
+## Running locally
 
-The local dev server now uses `http-server -c-1`, which disables caching and makes repeated re-exports much easier to verify.
-
-## Prerequisites
-
-In order to run this example, you'll need `node`, `npm`, and access to the command line. The `npx` binary ships with `node`, so just download and install that from the [Node.js downloads site](https://nodejs.org/en/download/). The recommended version is their latest `LTS`, which at the time of writing this document is version 16.
-
-If have heard about `node` and `npm` before but would like to know more about the included `npx` Package Runner please refer to the [Node.js Documentation](https://nodejs.dev/learn/the-npx-nodejs-package-runner).
-
-## File structure
-
-The source code of the web application is in the `js/` directory. This directory contains the file `app.js`, which does all the work of loading and connecting your RNBO patch. There is also a file `guardrails.js`, which simply tries to provide some clear feedback if you're not running this example in the intended way.
-
-Some notable files/directories:
-
-| Location                          | Explanation   |
-| --------------------------------- | ------------- |
-| export/                           | The directory into which you should export your RNBO code |
-| js/                               | Source for the project, edit it however you like |
-| index.html                        | The web page itself |
-
-## Using this Template
-
-This Github repo is a template, which means you can use it to start your own git-based project using this repository as a starting point. The major difference between a template and a fork is that your new project won't include the commit history of this template--it will be an entirely new starting point. For more see [the official description](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
-
-### Getting Started
-
-To get started, first create a new repository to hold your project using this repository as a template. If you're viewing this repo on Github, you should see a button at the top of the page that says `Use this template`. 
-
-![Use this template button](./img/use-this-template-button.png)
-
-You can also follow [the official steps](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) on Github for creating a new repository from a template.
-
-Now you need to copy this repository locally. Follow [the official steps](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) to clone your repository.
-
-### Working with RNBO
-
-Next, open the RNBO patcher you'd like to work with, and navigate to the export sidebar. Find the "Web Export" target.
-
-![Web export in the sidebar](./img/js-export-location.png)
-
-Export your project, making sure to export into the `export` folder in your repository directory. Your export directory should look something like this:
-
-```
-export/
-├─ patch.export.json
-├─ README.md
-```
-
-Whenever you make a change to your RNBO patch, remember to export the source code again to update this file. Now that you've exported your RNBO code, we're ready to open the webpage. From the repository root, run the following command to start the local web server
+Install Node.js, then from the repository root run:
 
 ```sh
 npm run dev
 ```
 
-Once the server started up successfully you may see something like the following in the console:
+This starts a local server with caching disabled so repeated RNBO re-exports are easy to verify.
 
-```sh
-Available on:
-  http://127.0.0.1:8080
-  http://192.168.88.139:8080
-Hit CTRL-C to stop the server
+## RNBO iteration loop
+
+Use this loop while working:
+
+1. Edit the RNBO patch in Max.
+2. Export again into `export/`.
+3. Run `npm run sync-export` if the export filename changed.
+4. Keep building the web interface here.
+5. Refresh the page and test.
+
+The `export/` directory is intentionally disposable. You should feel free to re-export over it as often as you want.
+
+## Switching skins
+
+The template now supports interchangeable UI skins. Change the active skin in `js/template-config.js`:
+
+```js
+uiSkin: "default"
 ```
-Open the shown URL, fe. `http://127.0.0.1:8080` in your default browser, if everything went well, you should see and hear your RNBO patch.
 
-### Exporting a new patch
+Available starting options:
 
-By default this project now generates `export/export-manifest.json` and uses that file to find the right RNBO export. If RNBO writes a different file name such as `MyPatch.export.json`, run:
+- `"default"`: neutral template layout for any RNBO patch
+- `"juno"`: preserved example skin showing how to build an instrument-specific panel
+- `"chowningfm"`: the current project-specific FM interface with paired control/readout groups
+
+This is the main generalization seam for future projects: keep the RNBO runtime stable, and swap or extend the skin layer per instrument.
+
+## Style system
+
+The repo now treats visual preferences as an explicit contract rather than implicit taste:
+
+- `STYLE_GUIDE.md` captures the non-negotiable design rules.
+- `style/style.css` exposes semantic tokens for text, surfaces, borders, and primary actions.
+- New UI work should prefer semantic tokens over hard-coded palette values.
+
+When in doubt, default to the guide's core rules: monochrome-first hierarchy, sans-dominant typography, and rare accent usage.
+
+## Current UI Contract
+
+The current `chowningfm` skin is intentionally much narrower than the generic template. It is not a full synth dashboard. It is a focused FM relationship view.
+
+The page should contain only:
+
+- Three primary control groups
+- The on-screen keyboard
+
+The three primary groups are:
+
+1. `Carrier`
+2. `Modulator`
+3. `Modulation Index`
+
+Each group contains exactly two items:
+
+- One editable value
+- One derived readout
+
+Current pairings:
+
+| Group | Editable label | Derived label |
+| --- | --- | --- |
+| `Carrier` | `Ratio` | `Freq` |
+| `Modulator` | `Ratio` | `Freq` |
+| `Modulation Index` | `AMOUNT` | `Deviation` |
+
+## UI Presentation Rules
+
+The current interface intentionally avoids most of the old template chrome.
+
+- Remove generic header, subtitle, patch metadata, preset UI, and MIDI selector from the main layout.
+- Remove inner cards inside the three primary groups.
+- Remove boxed styling around editable numeric values.
+- Keep each primary group color-coded with its own accent.
+- Treat the keyboard as the only persistent secondary section.
+
+## Type Rules For This UI
+
+The Chowning FM interface uses a role reversal relative to the earlier template:
+
+- Labels and section titles use the broader primary typeface with heavier weight.
+- Numeric values use the condensed typeface.
+- Numeric alignment should be baseline-driven, not box-driven.
+- Editable values and derived display values should use the same apparent size.
+
+## Implementation Notes
+
+The current grouped UI is encoded in these places:
+
+- [js/skins/chowningfm.js](/Users/mdavidson/Documents/Repos/ChowningFM/js/skins/chowningfm.js): group titles, accents, visible controls, and label overrides
+- [js/custom-ui.js](/Users/mdavidson/Documents/Repos/ChowningFM/js/custom-ui.js): paired derived readouts and explicit outport label mapping
+- [style/style.css](/Users/mdavidson/Documents/Repos/ChowningFM/style/style.css): flattened layout, typography roles, accent treatment, and keyboard styling
+
+## Creating a new project-specific UI
+
+You can evolve this template in two directions:
+
+1. Adjust `js/template-config.js` for a lightweight project-specific setup.
+2. Add a new skin file under `js/skins/` when you want a stronger custom layout or branding.
+
+For a new skin, define:
+
+- `theme`: CSS theme name
+- `description`: header copy
+- `createGroups(parameters, config)`: parameter grouping strategy
+- `accent`: optional group accent key when a skin uses color-coded sections
+- `derivedTags`: optional outport tags to render alongside controls in the same group
+- `labelOverrides`: optional short labels
+- `graphicSelectorParamIds`: optional enum-style button controls
+- `keyboard`: optional note range override
+
+## Working with RNBO exports
+
+Export your patch into the `export/` folder. The directory usually looks like:
+
+```text
+export/
+├─ MyPatch.export.json
+├─ dependencies.json
+├─ export-manifest.json
+└─ README.md
+```
+
+If RNBO writes a different export filename, run:
 
 ```sh
 npm run sync-export
 ```
 
-If you prefer to hard-code the export filename instead, update the configuration in `js/app.js`. Change:
-
-```js
-patchExportURL: "export/patch.export.json"
-```
-
-to reflect the name of your export.
-
-## Custom UI development
-
-You do not need to keep editing the RNBO bootstrapping logic every time you want a different interface.
-
-Use these files like this:
-
-- `js/app.js`: loads the export, creates the RNBO device, and emits the `rnbo-ready` event
-- `js/custom-ui.js`: your custom controls and page behavior
-- `index.html`: your page structure
-- `style/style.css`: your styles
-
-In `js/custom-ui.js`, listen for the device becoming ready:
-
-```js
-window.addEventListener("rnbo-ready", (event) => {
-    const { device, patcher } = event.detail;
-    console.log("RNBO ready", patcher.desc.meta.filename);
-});
-```
-
-From there you can:
-
-- read parameters from `device.parameters`
-- set parameter values with `param.value = ...`
-- subscribe to parameter changes with `device.parameterChangeEvent.subscribe(...)`
-- send messages or MIDI events to the patch
-
-If you want to replace the stock template UI entirely, set this in `js/app.js`:
-
-```js
-useTemplateUI: false
-```
-
-That keeps the RNBO loading behavior while disabling the example controls.
+That script updates `export/export-manifest.json`, which the web app reads at startup.
 
 ## Troubleshooting
 
-### Why don't I see anything?
+### Nothing loads
 
-First, check your developer console. On MacOS, you can bring this up in most browsers by pressing Command-Option-I on a Mac. Firefox puts developer tools under Tools > Browser Tools > Web Developer Tools. Other browsers may put this feature somewhere else, so check the documentation for your browser of choice. The important thing to do here is to make sure you don't see any error. If you see something in red, read the message carefully.
+Open the browser developer console and check for setup errors. The included `js/guardrails.js` also shows common local setup problems, especially when the page is opened via `file://` instead of a web server.
 
-### Something doesn't seem to be working right
+### The patch is stale
 
-It might be that the version of RNBO that you used to export your patch doesn't match the version of the RNBO library that `index.html` is downloading. Look for a message in the developer console talking about mismatched versions. To fix this, either export a version of your patch using a more up-to-date version of RNBO, or else change the `script` tags in `index.html` to download a different version of the RNBO libraries.
+Hard refresh the page after re-exporting. The dev server disables caching, but a browser refresh can still help after repeated export cycles.
 
-### My samples aren't loading correctly
+### Samples fail to decode
 
-Again check the developer console, this time looking for error messages about a failure to decode audio data. Some browsers, like Chrome for example, don't support decoding `.aif` files. So if you're using `anton.aif` as a sample dependency, you should export again using `anton.wav`. Or maybe find another sample to use.
-
-### Why isn't my patch changing in the browser?
-
-If you changed your exported patch in the `export` folder but your patch isn't changing in the browser, you might need to hard refresh the page (cmd+shift+R). This clears the cache to account for any changes to the page being served.
+Check the console for audio decoding errors. Some browsers reject certain formats such as `.aif`, so re-exporting with `.wav` assets is often the fix.
 
 ## Why a local server?
-We're recreating on a very small scale what happens whenever you load a website on your computer. When you run `npm run dev`, a Node process starts an `http-server` instance. This process binds to a port on your machine, defaulting to port 8080. When your browser tries to access the website `http://localhost:8080`, it connects to the server and tries to get the content for the given path, which is `/`. Given this path, the server returns the contents of the file `index.html`, which is what you see when you load the page.
 
-As part of loading that page, your web browser also asks the server for the JavaScript file at `js/app.js`. When the browser executes this script, it makes yet another request to fetch the file at the path `export/patch.export.json`. Finally, the script can use this exported patch to create a RNBO JavaScript object and connect it to the audio graph in the current page.
-
-The important takeaway here is that this is the kind of interaction that your browser is expecting: making HTTP and HTTPS requests to fetch resources from a remote server. It's technically possible to simply double-click on the `index.html` file and to load the page using the `file:` protocol instead of `http:` or `https:`. However, for security reasons this will block access to `WebAssembly` or `AudioWorklets`, which will keep our exported RNBO patch from working the way we want. Running a local server lets the browser treat the webpage as if it were pulled from the internet like any other page.
-
-The other reason that we run a server this way is because this brings us much closer to putting our RNBO patch on the publically accessible internet. If you want to build a public website containing a RNBO patch, it's helpful to keep this simple example in mind when you think about what resources to put where.
-
-## Customizing your web page
-
-From this point, the sky is the limit. You can do anything and everything to your web page, adding custom graphics and interaction in whatever way you like. A full discussion of web programming is beyond the scope of this README, but some useful reading material would include:
-
-- [ReactJS](https://reactjs.org/)
-- [p5JS](https://p5js.org/)
-- [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial)
-- [Netlify](https://www.netlify.com/)
+RNBO web exports rely on browser features that do not work correctly from `file://` URLs, including WebAssembly and AudioWorklets. Running `npm run dev` makes the browser treat the project like a real website and keeps the setup aligned with eventual deployment.

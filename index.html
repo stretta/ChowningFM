@@ -6,25 +6,29 @@
     <meta name="theme-color" content="#000000">
     <meta name="rnbo-version" content="1.0.0-alpha.5">
     <link rel="stylesheet" href="style/style.css">
-    <title>RNBO Web Export</title>
+    <title>Chowning FM</title>
 </head>
 
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="rnbo-root">
-        <main id="synth-panel" aria-label="RNBO filter controls">
-            <div id="panel-toolbar">
-                <div id="midi-panel" hidden>
-                    <label id="midi-label" for="midi-input-select">MIDI In</label>
-                    <select id="midi-input-select" aria-label="Web MIDI input selector"></select>
-                </div>
-                <div id="preset-panel" hidden>
-                    <label id="preset-label" for="preset-select">Preset</label>
-                    <select id="preset-select" aria-label="RNBO preset selector"></select>
-                </div>
-            </div>
-            <div id="rnbo-parameter-sliders" aria-live="polite"></div>
-            <div id="rnbo-keyboard" aria-label="Five octave keyboard"></div>
+        <main id="app-shell" aria-label="Chowning FM demo">
+            <section id="app-panel">
+                <section id="parameter-section" aria-labelledby="parameter-heading">
+                    <div class="section-heading">
+                        <h2 id="parameter-heading">Operator Relationships</h2>
+                    </div>
+                    <div id="rnbo-parameter-sliders" aria-live="polite"></div>
+                    <div id="fm-visualization-host"></div>
+                </section>
+
+                <section id="output-section" aria-labelledby="output-heading">
+                    <div class="section-heading">
+                        <h2 id="output-heading">Output</h2>
+                    </div>
+                    <div id="rnbo-output-controls" aria-live="polite"></div>
+                </section>
+            </section>
         </main>
     </div>
 
@@ -36,7 +40,11 @@
     <!-- It simply offers some helpful error messages for common problems -->
     <script type="text/javascript" src="js/guardrails.js"></script>
 
+    <script type="text/javascript" src="js/template-config.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/skins/default.js"></script>
+    <script type="text/javascript" src="js/skins/chowningfm.js"></script>
+    <script type="text/javascript" src="js/skins/juno.js"></script>
     <script type="text/javascript" src="js/custom-ui.js"></script>
 </body>
 </html>

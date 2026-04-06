@@ -1,9 +1,12 @@
 {
-  "name": "juno2-rnbo-web-template",
+  "name": "chowning-fm",
   "private": true,
   "scripts": {
     "sync-export": "node scripts/sync-rnbo-export.mjs",
     "dev": "npm run sync-export && npx http-server -c-1 .",
     "serve": "npm run sync-export && npx http-server -c-1 ."
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }
