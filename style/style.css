@@ -49,6 +49,11 @@ body {
     min-height: 100%;
 }
 
+html[data-embed-mode="true"],
+html[data-embed-mode="true"] body {
+    min-height: 100vh;
+}
+
 body {
     font-family: var(--font-primary);
     background: var(--color-surface-page);
@@ -77,8 +82,16 @@ textarea {
     box-sizing: border-box;
 }
 
+html[data-embed-mode="true"] #rnbo-root {
+    padding: 0;
+}
+
 #app-shell {
     width: min(78rem, 100%);
+}
+
+html[data-embed-mode="true"] #app-shell {
+    width: 100%;
 }
 
 #app-panel {

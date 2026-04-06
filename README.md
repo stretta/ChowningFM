@@ -40,6 +40,30 @@ npm run dev
 
 This starts a local server with caching disabled so repeated RNBO re-exports are easy to verify.
 
+## Canvas-friendly embed
+
+The repo now includes a lightweight LMS wrapper at [canvas-embed.html](/Users/mdavidson/Documents/Repos/ChowningFM/canvas-embed.html). It loads the main app in a full-height iframe and enables a trimmed `?embed=1` layout inside the RNBO app.
+
+For Canvas, this snippet is the simplest starting point:
+
+```html
+<iframe
+  src="https://stretta.github.io/ChowningFM/canvas-embed.html"
+  title="Chowning FM"
+  width="100%"
+  height="1200"
+  style="border:0; display:block; width:100%;"
+  loading="lazy"
+  allow="autoplay">
+</iframe>
+```
+
+If your Canvas page already handles sizing and you want to skip the wrapper, you can also point directly at:
+
+```text
+https://stretta.github.io/ChowningFM/?embed=1
+```
+
 ## RNBO iteration loop
 
 Use this loop while working:

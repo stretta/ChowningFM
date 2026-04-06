@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chowning FM Embed</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --embed-bg: #eef3f4;
+            --embed-border: rgba(37, 53, 60, 0.14);
+            --embed-shadow: 0 18px 40px rgba(37, 53, 60, 0.12);
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            background: var(--embed-bg);
+            font-family: "Avenir Next", "Avenir", "Nunito Sans", "Segoe UI", sans-serif;
+        }
+
+        body {
+            padding: 0;
+        }
+
+        .embed-shell {
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .embed-frame {
+            width: 100%;
+            min-height: 100vh;
+            display: block;
+            border: 0;
+            background: #ffffff;
+        }
+
+        @supports (height: 100dvh) {
+            .embed-shell,
+            .embed-frame {
+                min-height: 100dvh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .embed-frame {
+                min-height: 1200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="embed-shell">
+        <iframe
+            class="embed-frame"
+            src="./?embed=1"
+            title="Chowning FM"
+            loading="eager"
+            allow="autoplay"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </main>
+</body>
+</html>

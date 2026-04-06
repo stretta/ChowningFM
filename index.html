@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
     <meta name="rnbo-version" content="1.0.0-alpha.5">
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("embed") === "1") {
+                document.documentElement.dataset.embedMode = "true";
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="style/style.css">
     <title>Chowning FM</title>
 </head>
