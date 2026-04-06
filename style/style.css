@@ -49,6 +49,18 @@ body {
     min-height: 100%;
 }
 
+<<<<<<< Updated upstream
+=======
+html[data-embed-mode="true"],
+html[data-embed-mode="true"] body {
+    min-height: 100vh;
+}
+
+html[data-embed-mode="true"] body {
+    background: transparent;
+}
+
+>>>>>>> Stashed changes
 body {
     font-family: var(--font-primary);
     background: var(--color-surface-page);
